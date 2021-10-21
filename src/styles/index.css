@@ -9,7 +9,7 @@ body {
 img {
     width: 100%;
     max-width: 100%;
-    display: bloсk;
+    display: block;
 }
 
 a {
@@ -50,12 +50,13 @@ main {
 }
 
 /* Action style */
-.action {
+.action.fetch {
     background-color: #66BB6A;
     font-size: 16px;
     padding: 10px 20px;
     border-radius: 6px;
-    margin: 10px 0;
+    margin: 0 auto;
+    width: 200px;
 }
 
 .action:hover {
@@ -77,7 +78,6 @@ a {
     border-radius: 6px;
     overflow: hidden;
     width: 100%;
-    min-height: 100px;
 }
 
 a:nth-child(n) {
@@ -99,6 +99,10 @@ a:nth-child(3n) {
 }
 
 figure {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    
     max-width: 100%;
     min-height: 350px;
     margin: 0;
@@ -126,15 +130,17 @@ figcaption {
     bottom: 0;
     right: 0;
     background-color: rgba(33, 33, 33, 0.5);
-    z-index: -1;
+    z-index: 1;
+
+    overflow-y: scroll;
 }
 
 .popup.open {
     visibility: visible;
 }
 
-.action {
-    position: absolute;
+.action.close {
+    position: fixed;
     top: 50px;
     right: 50px;
     background-color: transparent;
@@ -143,6 +149,7 @@ figcaption {
     width: 40px;
     height: 40px;
     border-radius: 50%;
+    z-index: 1;
 }
 
 .popup .content {
@@ -157,4 +164,21 @@ figcaption {
 
 .popup .link {
     display: inline;
+}
+
+
+@media screen and (max-width: 768px) {
+    .popup .content {
+        min-width: 100vw;
+        min-height: 100vh;
+        padding-top: 60px;
+
+        border-radius: 0;
+    }
+
+    .action.close {
+        color: #c2c2c2;
+        top: 5px;
+        right: 20px;
+    }
 }
