@@ -1,14 +1,14 @@
-'use strict';
+"use strict";
 
-const action = document.querySelector('.action');
-const templateImageCard = document.querySelector('#image');
-const templateImagePopup = document.querySelector('#popup-image');
-const container = document.querySelector('.images');
+const action = document.querySelector(".action.fetch");
+const templateImageCard = document.querySelector("#image");
+const templateImagePopup = document.querySelector("#popup-image");
+const container = document.querySelector(".images");
 
-const popup = document.querySelector('.popup');
-const popupContainer = document.querySelector('.popup .content');
-const popupClose = document.querySelector('.popup .action');
-const loader = document.querySelector('.loader');
+const popup = document.querySelector(".popup");
+const popupContainer = document.querySelector(".popup .content");
+const popupClose = document.querySelector(".popup .action.close");
+const loader = document.querySelector(".loader");
 
 const MAX_PAGE_IAMGES = 34;
 let loaderTimeout;
@@ -19,9 +19,9 @@ let isLoading = false;
  * Отправляется первый запрос за картинками, юез параметров т.к. с дефолтными настройками.
  */
 const initialState = function () {
-    action.disabled = false;
-    getPictures();
-}
+  action.disabled = false;
+  getPictures();
+};
 
 /**
  * Функция запрашивает картинки для галереи
@@ -30,11 +30,15 @@ const initialState = function () {
  * @param {number} limit
  */
 const getPictures = function (page = 1, limit = 10) {
-    showLoader();
-    fetch(`https://picsum.photos/v2/list?page=${page};limit=${limit}`)
-        .then(function (response) { return response.json() })
-        .then(function (result) { renderPictures(result) })
-}
+  showLoader();
+  fetch(`https://picsum.photos/v2/list?page=${page};limit=${limit}`)
+    .then(function (response) {
+      return response.json();
+    })
+    .then(function (result) {
+      renderPictures(result);
+    });
+};
 
 /**
  * Функция запрашивает информацию о конкретной картинке по её id
@@ -42,32 +46,36 @@ const getPictures = function (page = 1, limit = 10) {
  * @param {number} id
  */
 const getPictureInfo = function (id = 0) {
-    showLoader();
-    fetch(`https://picsum.photos/id/${id}/info`)
-        .then(function (response) { return response.json() })
-        .then(function (result) { renderPopupPicture(result) })
-}
+  showLoader();
+  fetch(`https://picsum.photos/id/${id}/info`)
+    .then(function (response) {
+      return response.json();
+    })
+    .then(function (result) {
+      renderPopupPicture(result);
+    });
+};
 
 /**
  * Функция показывает индикатор загрузки.
  * Меняет ситили, ничего не возвращает.
  */
 const showLoader = function () {
-    loader.style.visibility = 'visible';
-    isLoading = true;
-}
+  loader.style.visibility = "visible";
+  isLoading = true;
+};
 
 /**
  * Функция скрывает индикатор загрузки.
  * Удаляет таймаут индикатора, ничего не возвращает.
  */
 const hideLoader = function () {
-    loaderTimeout = setTimeout(function () {
-        loader.style.visibility = 'hidden';
-        isLoading = false;
-        clearTimeout(loaderTimeout);
-    }, 700);
-}
+  loaderTimeout = setTimeout(function () {
+    loader.style.visibility = "hidden";
+    isLoading = false;
+    clearTimeout(loaderTimeout);
+  }, 700);
+};
 
 /**
  * Функция пропорционально делит размер картинки,
@@ -77,12 +85,12 @@ const hideLoader = function () {
  * @param {number} size
  */
 const cropImage = function (src, size = 2) {
-    const [domain, key, id, width, height] = src.split('/').splice(2);
-    const newWidth = Math.floor(+width / size);
-    const newHeight = Math.floor(+height / size);
+  const [domain, key, id, width, height] = src.split("/").splice(2);
+  const newWidth = Math.floor(+width / size);
+  const newHeight = Math.floor(+height / size);
 
-    return `https://${domain}/${key}/${id}/${newWidth}/${newHeight}`;
-}
+  return `https://${domain}/${key}/${id}/${newWidth}/${newHeight}`;
+};
 
 /**
  * Функция копирует шаблон для каждой картинки,
@@ -90,30 +98,30 @@ const cropImage = function (src, size = 2) {
  * @param {array} list
  */
 const renderPictures = function (list) {
-    if (!list.length) {
-        throw Error(`Pictures not defined. The list length: ${list.length}`);
-    }
+  if (!list.length) {
+    throw Error(`Pictures not defined. The list length: ${list.length}`);
+  }
 
-    const fragment = document.createDocumentFragment();
+  const fragment = document.createDocumentFragment();
 
-    list.forEach(function (element) {
-        const clone = templateImageCard.content.cloneNode(true);
+  list.forEach(function (element) {
+    const clone = templateImageCard.content.cloneNode(true);
 
-        const link = clone.querySelector('a');
+    const link = clone.querySelector("a");
 
-        link.href = element.url;
-        link.dataset.id = element.id;
+    link.href = element.url;
+    link.dataset.id = element.id;
 
-        const image = clone.querySelector('img');
-        image.src = cropImage(element.download_url, 5);
-        image.alt = element.author;
-        image.classList.add('preview');
-        fragment.appendChild(clone)
-    });
+    const image = clone.querySelector("img");
+    image.src = cropImage(element.download_url, 5);
+    image.alt = element.author;
+    image.classList.add("preview");
+    fragment.appendChild(clone);
+  });
 
-    container.appendChild(fragment);
-    hideLoader();
-}
+  container.appendChild(fragment);
+  hideLoader();
+};
 
 /**
  * Функция копирует шаблон для картинки в попапе,
@@ -121,29 +129,29 @@ const renderPictures = function (list) {
  * @param {object} picture
  */
 const renderPopupPicture = function (picture) {
-    const clone = templateImagePopup.content.cloneNode(true);
-    const img = clone.querySelector('img');
-    const link = clone.querySelector('a');
-    const author = clone.querySelector('.author');
+  const clone = templateImagePopup.content.cloneNode(true);
+  const img = clone.querySelector("img");
+  const link = clone.querySelector("a");
+  const author = clone.querySelector(".author");
 
-    img.src = cropImage(picture.download_url, 2);
-    img.alt = picture.author;
-    author.textContent = picture.author;
-    img.width = picture.width / 10;
-    link.href = picture.download_url;
+  img.src = cropImage(picture.download_url, 2);
+  img.alt = picture.author;
+  author.textContent = picture.author;
+  img.width = picture.width / 10;
+  link.href = picture.download_url;
 
-    popupContainer.innerHTML = '';
-    popupContainer.appendChild(clone)
-    hideLoader();
-    togglePopup();
-}
+  popupContainer.innerHTML = "";
+  popupContainer.appendChild(clone);
+  hideLoader();
+  togglePopup();
+};
 
 /**
  * Функция переклбчает класс открытия на попапе
  */
 const togglePopup = function () {
-    popup.classList.toggle('open');
-}
+  popup.classList.toggle("open");
+};
 
 /**
  * @type {object} MouseEvent
@@ -154,22 +162,24 @@ const togglePopup = function () {
  * @param {MouseEvent} evt
  */
 const actionHandler = function (evt) {
-    evt.preventDefault();
+  evt.preventDefault();
 
-    if (isLoading) {
-        return;
-    }
+  if (isLoading) {
+    return;
+  }
 
-    const nextPage = evt.currentTarget.dataset.page;
-    evt.currentTarget.dataset.page = Number(nextPage) + 1;
+  const nextPage = evt.currentTarget.dataset.page;
+  evt.currentTarget.dataset.page = Number(nextPage) + 1;
 
-    if (nextPage > MAX_PAGE_IAMGES) {
-        console.warn(`WARN: You are trying to call a page that exceeds ${MAX_PAGE_IAMGES}`);
-        evt.currentTarget.disabled = true;
-    } else {
-        getPictures(nextPage);
-    }
-}
+  if (nextPage > MAX_PAGE_IAMGES) {
+    console.warn(
+      `WARN: You are trying to call a page that exceeds ${MAX_PAGE_IAMGES}`
+    );
+    evt.currentTarget.disabled = true;
+  } else {
+    getPictures(nextPage);
+  }
+};
 
 /**
  * Обработчик события click по картинкам.
@@ -178,17 +188,17 @@ const actionHandler = function (evt) {
  * @param {MouseEvent} evt
  */
 const imageHandler = function (evt) {
-    evt.preventDefault();
+  evt.preventDefault();
 
-    const link = evt.target.closest('a')
+  const link = evt.target.closest("a");
 
-    if (link) {
-        getPictureInfo(link.dataset.id);
-    }
-}
+  if (link) {
+    getPictureInfo(link.dataset.id);
+  }
+};
 
-action.addEventListener('click', actionHandler);
-container.addEventListener('click', imageHandler);
-popupClose.addEventListener('click', togglePopup);
+action.addEventListener("click", actionHandler);
+container.addEventListener("click", imageHandler);
+popupClose.addEventListener("click", togglePopup);
 
 initialState();
